@@ -101,7 +101,6 @@ debug:
 I0626 12:06:27.664113 34017 planning_base.cc:140] get_width_of_lane: 1, left_width: 2.51414, right_width: 1.70552
 跟dreamview里的图片反应的一致，太靠右了.
 
-![apollo1](../../../../../AppData/Local/nvim/lua/plugins/assets/2026-06-26-14-55-47.png)
 
 搜索是446帧开始的.
 

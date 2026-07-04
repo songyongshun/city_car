@@ -9,7 +9,7 @@ location: "Changzhou, China"
 
 
 ##  设备图
-![1778155363570](image/chapter-03/1778155363570.png)
+![1778155363570](../image/chapter-03/1778155363570.png)
 
 ## 使用方法
 

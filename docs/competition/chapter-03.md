@@ -12,7 +12,7 @@ location: "Changzhou, China"
 
 
 
-根据日志中 lane_follow_stage.cc:169 的性能统计输出，每个规划周期依次执行以下 11 个 Task：
+根据日志中 `lane_follow_stage.cc:169` 的性能统计输出，每个规划周期依次执行以下 11 个 Task：
 顺序	Task 名称
 1	LANE_CHANGE_PATH
 2	LANE_FOLLOW_PATH
@@ -35,12 +35,14 @@ Apollo 采用的是笛卡尔坐标系向 Frenet 坐标系的投影。确定左�
 
 
 
-在 Apollo 规划器的路径边界决策中，*center_l* 是一个 std::vector<double> 类型的变量，用于记录路径边界在 Frenet 坐标系下的横向中心线历史位置。
+在 Apollo 规划器的路径边界决策中，*center_l* 是一个 `std::vector<double>` 类型的变量，用于记录路径边界在 Frenet 坐标系下的横向中心线历史位置。
 
-center_l 记录的是 path_boundary（路径边界）在 Frenet 坐标系下的横向中心（l 坐标）随纵向距离 s 的变化：
+`center_l` 记录的是 `path_boundary`（路径边界）在 Frenet 坐标系下的横向中心（l 坐标）随纵向距离 s 的变化：
+```cpp
 // 每个路径边界点处的中心
 center_l.push_back((left_bound.l + right_bound.l) / 2.0);
-由于这个边界会受到障碍物绕行的影响而偏向某侧（比如碰到障碍物后左边路变窄，中心就右移），所以 center_l 反映了：
+```
+由于这个边界会受到障碍物绕行的影响而偏向某侧（比如碰到障碍物后左边路变窄，中心就右移），所以 `center_l` 反映了：
 在当前可行驶区域内，规划器"倾向于"让车走的中心线走向。
 
 
