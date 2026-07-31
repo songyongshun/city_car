@@ -1,7 +1,4 @@
-Title: 趣味项目
-NavigationTitle: 趣味项目
----
-# 趣味项目章节
+# 赛题介绍
 
 以下是2026年的赛题，参考[官网](https://apollo.baidu.com/community/competition/70)
 

@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "My Awesome Project",
+  title: "apollo project",
   description: "A VitePress Site",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -30,9 +30,9 @@ export default defineConfig({
         {
           text: '比赛',
           items: [
-            { text: 'Chapter 01: Apollo 平台安装', link: '/competition/chapter-01' },
-            { text: 'Chapter 02: Apollo 系统架构详解', link: '/competition/chapter-02' },
-            { text: 'Chapter 03: Apollo 与车路协同', link: '/competition/chapter-03' }
+            { text: 'Chapter 01: 赛题一解答', link: '/competition/chapter-01' },
+            { text: 'Chapter 02: 赛题二解答', link: '/competition/chapter-02' },
+            { text: 'Chapter 03: 赛题三解答', link: '/competition/chapter-03' }
           ]
         }
       ]

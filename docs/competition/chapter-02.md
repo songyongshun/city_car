@@ -1,15 +1,9 @@
----
-title: "Apollo 平台入门"
-collection: teaching
-type: "Undergraduate course"
-permalink: /teaching/2025-autumn-teaching/apollo-chapter-1
-venue: "常州工业职业技术学院, 信息工程学院"
-date: 2025-09-01
-location: "Changzhou, China"
----
+# 赛题介绍
+| 赛题序号 | 赛题名称 | 赛题描述 | 评分标准 |
+| --- | --- | --- | --- |
+| 赛题二 | xh_2026_变道场景 | 主车在当前车道行驶，前方遇障碍物或车道占用，需变更至相邻车道通行。变道前，主车需观察目标车道后方来车情况，确认安全后完成变道。变道过程中需保持与前后车辆的安全距离，与后车保持安全跟车距离。变道区域限速 30km/h。 | 主车在规定时间内未完成相关任务，本场景分计 0 分；主车与障碍物或周围环境发生碰撞，该场景得 0 分；主车变道区域未限速，速度每超速 1m/s，本场景每帧扣 2 分；主车连续变道（一次跨越多条车道），扣 40 分。 |
 
 # 赛题二解答
-
 
 修改的文件
 1. /apollo_workspace/modules/planning/planning_base/gflags/planning_gflags.h（第 51 行）

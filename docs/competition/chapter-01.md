@@ -1,14 +1,10 @@
----
-title: "Apollo 平台入门"
-collection: teaching
-type: "Undergraduate course"
-permalink: /teaching/2025-autumn-teaching/apollo-chapter-1
-venue: "常州工业职业技术学院, 信息工程学院"
-date: 2025-09-01
-location: "Changzhou, China"
----
+# 赛题一题目
 
-# 赛题一解答
+| 赛题序号 | 赛题名称 | 赛题描述 | 评分标准 |
+| --- | --- | --- | --- |
+| 赛题一 | xh_2026_交通灯场景 | 直行时，当主车监测到前方红灯信号时，主车需停车在停止线前1.5至2.0米处，不得超过停止线。在红灯状态下，车辆可右转通过。 | 主车停止距离未达到1.5-2.0m距离内，本场景扣20分。 |
+
+# 解答思路
 
 ```bash
 vi /apollo_workspace/modules/planning/scenarios/traffic_light_unprotected_right_turn/conf/scenario_conf.pb.txt
@@ -19,6 +15,7 @@ enable_right_turn_on_red: true
 运行的时候，在场景红绿灯2里，发现进入的是protected，而不是unproctected，是因为地图lane没有属性right_turn.
 
 查看
+
 ```bash
 vi /apollo_workspace/modules/planning/scenarios/traffic_light_unprotected_right_turn/traffic_light_unprotected_right_turn_scenario.cc
 # 定位到
@@ -27,6 +24,7 @@ vi /apollo_workspace/modules/planning/scenarios/traffic_light_unprotected_right_
 ```
 
 修改思路是除了判断lane的属性，还应该根据route路径进行判断。
+
 ```c++
   if (turn_type != hdmap::Lane::RIGHT_TURN) {
     AINFO << "RightTurnScenario CHECK: turn_type not RIGHT_TURN, "
@@ -44,6 +42,7 @@ vi /apollo_workspace/modules/planning/scenarios/traffic_light_unprotected_right_
   }
 
 ```
+
 IsRightTurnByRouting的实现为
 
 ```c++
@@ -111,6 +110,7 @@ bool TrafficLightUnprotectedRightTurnScenario::IsRightTurnByRouting(
 ```
 
 由于使用了cmath，需要添加
+
 ```c++
 #include <cmath>
 ```
@@ -125,7 +125,6 @@ vi /apollo_workspace/modules/planning/scenarios/traffic_light_unprotected_right_
   bool IsRightTurnByRouting(const Frame& frame,
                             double traffic_light_start_s) const;
 ```
-
 
 主车停止距离修改profile即可。
 
