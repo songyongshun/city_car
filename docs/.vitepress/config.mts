@@ -44,7 +44,8 @@ export default defineConfig({
             { text: 'Chapter 01: 给项目添加运行日志功能', link: '/courses-related/doc-01' },
             { text: 'Chapter 02: 8080 端口摄像头推流问题排查与解耦', link: '/courses-related/doc-02' },
             { text: 'Chapter 03: saveImg 与 saveIpm 参数', link: '/courses-related/doc-03' },
-            { text: 'Chapter 04: Debug 仿真模式使用指南', link: '/courses-related/doc-04' }
+            { text: 'Chapter 04: Debug 仿真模式使用指南', link: '/courses-related/doc-04' },
+            { text: 'Chapter 05: 小车启动流程详解', link: '/courses-related/doc-05' }
           ]
         }
       ]

@@ -5,7 +5,9 @@
 ## 1. 新增文件
 - **`include/utils/logger.hpp`** — `RunLogger` 单例类
 
-## 2. 核心实现（fd 级 tee 方案）
+## 2. 核心实现（fd（File Descriptor） 级 tee 方案）
+
+- 使用了unistd.h 的 `pipe()` + `dup2()` + `setvbuf()` + 后台线程 pump() + 文件追加写入的组合方案。
 
 | 步骤 | 说明 |
 |------|------|
