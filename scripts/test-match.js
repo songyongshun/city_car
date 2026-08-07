@@ -1,0 +1,13 @@
+const fs = require('fs');
+const f = 'C:/Users/swan/ys_data/repos/city_car/input/《智能汽车实训》实验指导（python版）-V3.1-20240220.md';
+const c = fs.readFileSync(f, 'utf8');
+const lines = c.split('\n');
+const name = '七、赛道元素识别模型训练实验';
+console.log('Line 1923:', lines[1922]);
+console.log('Starts with name:', lines[1922].startsWith(name));
+const regex = new RegExp('^' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\.{3,}');
+console.log('Regex:', regex);
+console.log('Match line 1923:', lines[1922].match(regex));
+console.log('Line 20:', lines[19]);
+console.log('Starts with name:', lines[19].startsWith(name));
+console.log('Match line 20:', lines[19].match(regex));

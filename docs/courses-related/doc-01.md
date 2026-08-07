@@ -1,57 +1,48 @@
-# aem 
+# 给项目添加运行日志功能
 
-## `aem enter` 实际依次执行的步骤
+可以方便提供给AI模型进行分析。
 
-1. **解析入口**
+## 1. 新增文件
+- **`include/utils/logger.hpp`** — `RunLogger` 单例类
 
-   - `/usr/bin/aem` 是符号链接 → `/opt/apollo/aem/aem` → `/opt/apollo/aem/run.sh`。
-   `run.sh` 先 source `env.sh`（设默认值：`AEM_VERSION=10.0.0-rc1-r4`、镜像仓库 `registry.baidubce.com/apollo/apollo-env-gpu`、容器前缀 `apollo_neo_dev_`、`APOLLO_ENV_NAME=$USER` 等）和 `funcs.sh`，置 `AEM_INITED=1`。
+## 2. 核心实现（fd 级 tee 方案）
 
-   - `run.sh`里指明按顺序执行哪些操作，具体操作的实现在 `funcs.sh` 里。
+| 步骤 | 说明 |
+|------|------|
+| ① 创建管道 | `pipe()` 打开一对 fd：`pf[0]`(读)、`pf[1]`(写) |
+| ② dup2 重定向 | `dup2(pf[1], STDIN_FILENO)` / `dup2(pf[1], STDOUT_FILENO)` — stdin/stdout 同时重定向到管道 |
+| ③ 取消缓冲 | `setvbuf(stdin/_IONBF)`、`setvbuf(stdout, NULL, _IONBF, 0)` — 确保立即 flush，日志无延迟 |
+| ④ 后台线程 pump() | 从管道读端循环读取原始字节（buf 最大 4KB），调用 `tee_write()` 同时写两份 |
+| ⑤ tee_write() | ① 写回原始 fd（屏幕输出不变）；② 追加日志文件（`\n` → `\r\n` 换行适配终端） |
 
-2. **`main()` 路由**
+**关键代码片段：**
+```cpp
+class RunLogger {
+public:
+    static bool start(const char* filename = "run");   // 一次性启动
+    static void stop();                                  // 程序退出时清理
 
-   因为是通过名为 `aem` 的符号链接调用、且脚本里定义了 `aem()` 函数，于是 `cmd=aem` → 调 `aem()` → 解析出 `aem-enter` → `/opt/apollo/aem/aem-enter`（`run.sh:267-279`）。
+private:
+    bool read_pipe();                                    // 从管道读取一次
+    bool append_line(std::string& line);                // 追加到日志文件
+};
+```
 
-3. **`aem-enter` 加载配置**
+## 3. 集成方式（`src/icar.cpp` → `main()`）
 
-（若`AEM_INITED` 为 1，不再重 source）：
-   - `source ${PWD}/.env`，即 `.env.x86_64`，内容是：
-     ```env
-     APOLLO_ENV_NAME=edu
-     APOLLO_ENV_WORKLOCAL=1
-     APOLLO_ENV_CONTAINER_REPO='registry.baidubce.com/apollo/apollo-env-gpu'
-     APOLLO_ENV_CONTAINER_TAG='9.0-latest'
-     ```
-   - 计算 `APOLLO_ENV_CONTAINER_NAME = apollo_neo_dev_ + edu = apollo_neo_dev_edu`
-   - `source /home/swan/.aem/envs/edu/env.config`（里面设置一堆 `AEM_*`/`APOLLO_ENV_*` 变量）
+```cpp
+// === 日志系统初始化 ===
+bool log_ok = RunLogger::start("run");  // 在 main() 入口第一行
+if (log_ok)
+    printf("\n=== Logging started ===\n");
+```
 
-4. **`apollo_enter_env`**：→ 调 `apollo_enter_container`（`funcs.sh:821`）。
+## 4. 日志文件格式与命名规则
+- 文件名：`run_YYYYMMDDHHMM.log`（如 `run_202608071530.log`）
+- 存储位置：程序工作目录下 `res/logs/run_XXXXXX.log`
+- 内容：完整的 **stdout + stderr 输出**（包括 `printf`、`cout`、异常堆栈等一切标准流）
 
-5. **`apollo_start_stopped_container`**：
-
-若容器处于 exited 状态则 `docker start`（`funcs.sh:814-818`）。
-
-6. **收集环境变量**：
-
-遍历所有 `APOLLO_ENV_*` 变量生成一堆 `-e`，再加 `HISTFILE/HISTSIZE/HISTFILESIZE/HISTCONTROL/DOCKER_USER`（`funcs.sh:824-835`）。
-
-7. **`xhost +local:root`** 允许容器连 X server。
-
-8. **执行**（`funcs.sh:841-847`）：
-   ```bash
-   docker exec \
-     -u "${APOLLO_ENV_CONTAINER_USER}" \
-     <一堆 -e APOLLO_ENV_*=...> \
-     -e HISTFILE=/apollo_workspace/.cache/.bash_history \
-     -e HISTSIZE=200000 \
-     -e HISTFILESIZE=200000 \
-     -e HISTCONTROL=ignorespace:erasedups \
-     -e DOCKER_USER="${APOLLO_ENV_CONTAINER_USER}" \
-     -w /apollo_workspace \
-     -it \
-     apollo_neo_dev_edu \
-     /bin/bash
-   ```
-
-9. 退出后 `xhost -local:root`。
+## 5. Linux 下编译验证
+```bash
+cd build && make -j4  # 日志自动写入 res/logs/
+```
