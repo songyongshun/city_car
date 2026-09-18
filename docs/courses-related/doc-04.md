@@ -75,4 +75,4 @@ Debug 仿真是**逐帧回放 + 识别结果观察**，不是连续自动播放�
 | 控制周期 | 30 FPS（主循环 1s/30） |
 | 串口 | 树莓派 GPIO UART (`/dev/ttyAMA0`) |
 | WiFi | 自动连接 `Tencent-a49b` |
-| 日志目录 | `res/logs/run_YYYYMMDDHHMM.log` |
+| 日志目录 | `<项目根>/logs/run_YYYYMMDDHHMM.log` |
